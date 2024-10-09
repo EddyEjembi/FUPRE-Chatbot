@@ -165,8 +165,8 @@ if "chat_history" not in st.session_state:
 # Display chat history (with citations for previous responses)
 for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):
-        #st.markdown(message["content"])
-        st.markdown(f'<div class="chat-message {message["role"]}">{message["content"]}</div>', unsafe_allow_html=True)
+        st.markdown(message["content"])
+        #st.markdown(f'<div class="chat-message {message["role"]}">{message["content"]}</div>', unsafe_allow_html=True)
         if message["role"] == "assistant" and message.get("citations"):
             show_citation(message["citations"])
 
@@ -177,7 +177,8 @@ if user_prompt:
     last_interaction_time = time.time()  # Reset last interaction time
 
     # Add user's message to chat and display it
-    st.chat_message("user").markdown(f'<div class="chat-message user">{user_prompt}</div>', unsafe_allow_html=True)
+    #st.chat_message("user").markdown(f'<div class="chat-message user">{user_prompt}</div>', unsafe_allow_html=True)
+    st.chat_message("user").markdown(user_prompt)
     st.session_state.chat_history.append({"role": "user", "content": user_prompt})
 
     # Prepare the payload for your server API
@@ -199,7 +200,8 @@ if user_prompt:
 
         # Display bot's response
         with st.chat_message("assistant"):
-            st.markdown(f'<div class="chat-message assistant">{bot_response}</div>', unsafe_allow_html=True)
+            #st.markdown(f'<div class="chat-message assistant">{bot_response}</div>', unsafe_allow_html=True)
+            st.markdown(bot_response)
             if citations:
                 show_citation(citations)
 
