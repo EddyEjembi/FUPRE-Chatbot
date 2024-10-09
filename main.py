@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import requests
+import time
 
 # Set the base URL of your server API
 API_URL = "https://fuprechatbot-fed3b2c7d4d0bce2.northcentralus-01.azurewebsites.net/ask"
@@ -133,6 +134,10 @@ html_logo = f"""
 # Display the logo, slogan, and title
 st.markdown(html_logo, unsafe_allow_html=True)
 
+# Store the last interaction time globally
+last_interaction_time = time.time()
+bot_intro_displayed = False  # Flag to check if the bot's introduction has been displayed
+
 # Function to show citations in an expander
 def show_citation(citations):
     unique_citations = {}
@@ -147,10 +152,15 @@ def show_citation(citations):
         for url, title in unique_citations.items():
             st.markdown(f"[**{title}**]({url})")
 
+# Function to introduce the bot
+def introduce_bot():
+    bot_intro = "Hi, I'm Frida. How can I help you today?"
+    st.chat_message("assistant").markdown(bot_intro)
 
 # Initialize chat history
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+
 
 # Display chat history (with citations for previous responses)
 for message in st.session_state.chat_history:
@@ -164,6 +174,8 @@ for message in st.session_state.chat_history:
 user_prompt = st.chat_input("Ask me about FUPRE...")
 
 if user_prompt:
+    last_interaction_time = time.time()  # Reset last interaction time
+
     # Add user's message to chat and display it
     st.chat_message("user").markdown(f'<div class="chat-message user">{user_prompt}</div>', unsafe_allow_html=True)
     st.session_state.chat_history.append({"role": "user", "content": user_prompt})
@@ -196,3 +208,12 @@ if user_prompt:
         error_message = f"Error: Unable to get a response. {str(e)}"
         st.session_state.chat_history.append({"role": "assistant", "content": error_message})
         st.chat_message("assistant").markdown(error_message)
+
+# Check for inactivity every second
+if not user_prompt and not bot_intro_displayed:
+    while True:
+        time.sleep(1)  # Pause for 1 second
+        if time.time() - last_interaction_time > 10:  # 10 seconds of inactivity
+            introduce_bot()
+            bot_intro_displayed = True  # Set the flag to prevent repeated introductions
+            break  # Exit the loop after introducing the bot
