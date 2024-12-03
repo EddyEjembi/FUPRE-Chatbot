@@ -167,8 +167,8 @@ for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
         #st.markdown(f'<div class="chat-message {message["role"]}">{message["content"]}</div>', unsafe_allow_html=True)
-        if message["role"] == "assistant" and message.get("citations"):
-            show_citation(message["citations"])
+        # if message["role"] == "assistant" and message.get("citations"):
+            #show_citation(message["citations"])
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask me about FUPRE...")
@@ -202,8 +202,8 @@ if user_prompt:
         with st.chat_message("assistant"):
             #st.markdown(f'<div class="chat-message assistant">{bot_response}</div>', unsafe_allow_html=True)
             st.markdown(bot_response)
-            if citations:
-                show_citation(citations)
+            """if citations:
+                show_citation(citations)"""
 
     except requests.exceptions.RequestException as e:
         # Handle any errors during the API call
